@@ -2,10 +2,11 @@ import os
 import json
 from dotenv import load_dotenv
 
-from sqlalchemy import Column, String, Integer, create_engine, DateTime
+from sqlalchemy import Column, String, Integer, create_engine, DateTime, ForeignKey, relationship
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from uuid import uuid4
+from utils import generate_hash, check_hash
 
 
 # load in dotenv 
@@ -38,20 +39,26 @@ class User(db.Model):
 
     id = Column(String, primary_key=True, default=uuid4)
     full_name = Column(String)
-    username = Column(String)
-    email = Column(String)
-    password = Column(String)
+    username = Column(String, unique=True)
+    email = Column(String, unique=True)
+    password_hash = Column(String(200))
+    todos = relationship('Todo', backref='user')
 
-    def __init__(self, full_name, username, email, password):
+    def __init__(self, full_name, username, email):
         
         self.full_name = full_name
         self.username = username
         self.email = email
-        self.password = password
 
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def set_password(self, password):
+        self.password_hash = generate_hash(password) 
+
+    def check_password(self, password): 
+        return check_hash(self.password_hash, password)
 
     def update(self):
         db.session.commit()
@@ -111,6 +118,7 @@ class Todo(db.Model):
     description = Column(String)
     date_created = Column(DateTime)
     due_date = Column(DateTime)
+    user = Column(Integer, ForeignKey('user.id'))
 
     def __init__(self, title, description, due_date):
         self.title = title
