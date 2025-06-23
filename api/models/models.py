@@ -2,11 +2,11 @@ import os
 import json
 from dotenv import load_dotenv
 
-from sqlalchemy import Column, String, Integer, create_engine, DateTime, ForeignKey, relationship
+from sqlalchemy import Column, String, Integer, create_engine, DateTime, ForeignKey
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from uuid import uuid4
-from utils import generate_hash, check_hash
+from api.utils import generate_hash, check_hash
 
 
 # load in dotenv 
@@ -42,7 +42,7 @@ class User(db.Model):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String(200))
-    todos = relationship('Todo', backref='user')
+    todos = db.relationship('Todo', backref='user')
 
     def __init__(self, full_name, username, email):
         

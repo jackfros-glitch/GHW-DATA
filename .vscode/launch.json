@@ -15,7 +15,7 @@
                 "FLASK_DEBUG": "1",
             },
             "envFile": "${workspaceFolder}/.env",  // Path to your .env file
-            "python": "/home/mackie/Documents/GHW:DATA/GHW-DATA/.venv/bin/python3",
+            // "python": "/home/mackie/Documents/GHW:DATA/GHW-DATA/.venv/bin/python3",
             "args": [
                 "run",
                 "--no-debugger",
